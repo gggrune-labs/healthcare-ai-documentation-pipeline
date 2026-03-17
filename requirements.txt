@@ -1,0 +1,33 @@
+# Healthcare AI Documentation Pipeline — Production Dependencies
+# Python 3.11 / Cloud Functions Gen 2
+#
+# All versions pinned for reproducible deployments.
+# Update process: run `pip-compile requirements.in` and review changelogs
+# for any packages that handle PHI-adjacent data (google-cloud-*, simple-salesforce).
+
+# --- Cloud Functions Framework -------------------------------------------
+functions-framework==3.5.0
+
+# --- Google Cloud Platform -----------------------------------------------
+google-cloud-pubsub==2.21.1          # Pub/Sub publisher (poll_drive)
+google-cloud-secret-manager==2.20.0  # Credential retrieval
+google-cloud-logging==3.10.0         # Structured log sink (optional direct client)
+google-api-python-client==2.139.0    # Drive API v3
+google-auth==2.29.0                  # Application Default Credentials
+google-auth-httplib2==0.2.0          # Auth adapter for Drive client
+
+# --- Vertex AI / Gemini --------------------------------------------------
+google-cloud-aiplatform==1.57.0      # Vertex AI SDK (GenerativeModel interface)
+# NOTE: google-cloud-aiplatform bundles proto-plus, grpcio, and protobuf;
+# do not pin those separately to avoid version conflicts.
+
+# --- CloudEvents / Eventarc ----------------------------------------------
+cloudevents==1.10.1                  # CloudEvent parsing for Pub/Sub trigger
+
+# --- Salesforce ----------------------------------------------------------
+simple-salesforce==1.12.5            # Salesforce REST API and SOQL client
+requests==2.32.3                     # HTTP client (used by simple-salesforce + our own calls)
+urllib3==2.2.2                       # HTTP connection pooling and retry adapter
+
+# --- Utilities -----------------------------------------------------------
+python-dateutil==2.9.0               # Robust date parsing for VTT timestamps
