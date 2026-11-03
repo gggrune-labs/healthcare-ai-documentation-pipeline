@@ -4,11 +4,11 @@ main.py
 Cloud Function entry points for the healthcare AI documentation pipeline.
 
 Entry points:
-  poll_drive         — HTTP-triggered (Cloud Scheduler). Lists .vtt files in
+  poll_drive        : HTTP-triggered (Cloud Scheduler). Lists .vtt files in
                        the Google Drive /Incoming folder and publishes each
                        as a Pub/Sub message.
 
-  process_transcript — Pub/Sub-triggered (via Eventarc). Processes a single
+  process_transcript: Pub/Sub-triggered (via Eventarc). Processes a single
                        transcript: downloads from Drive, generates a SOAP note
                        via Gemini 1.5 Pro, posts to Salesforce, and routes
                        the file to the appropriate Drive folder.
@@ -281,7 +281,7 @@ def process_transcript(cloud_event: CloudEvent) -> None:
         patient_id = _extract_patient_id(file_name)
         if not patient_id:
             logger.warning(
-                "Filename does not match expected convention — routing to NoMatch",
+                "Filename does not match expected convention; routing to NoMatch",
                 extra={"file_id": file_id},
             )
             _move_file(file_id, DRIVE_NOMATCH_FOLDER_ID, DRIVE_INCOMING_FOLDER_ID)
@@ -333,7 +333,7 @@ def process_transcript(cloud_event: CloudEvent) -> None:
 
     except SalesforceMatchError:
         logger.warning(
-            "No Salesforce contact matched — routing transcript to /NoMatch",
+            "No Salesforce contact matched; routing transcript to /NoMatch",
             extra={"file_id": file_id},
         )
         _safe_move_file(file_id, DRIVE_NOMATCH_FOLDER_ID, DRIVE_INCOMING_FOLDER_ID)
@@ -341,7 +341,7 @@ def process_transcript(cloud_event: CloudEvent) -> None:
 
     except TranscriptParseError as exc:
         logger.error(
-            "Transcript parse error — routing to /Error",
+            "Transcript parse error; routing to /Error",
             extra={"file_id": file_id, "error_type": "TranscriptParseError"},
         )
         _safe_move_file(file_id, DRIVE_ERROR_FOLDER_ID, DRIVE_INCOMING_FOLDER_ID)
@@ -350,7 +350,7 @@ def process_transcript(cloud_event: CloudEvent) -> None:
 
     except GeminiError as exc:
         logger.error(
-            "Gemini API error — routing to /Error",
+            "Gemini API error; routing to /Error",
             extra={"file_id": file_id, "error_type": "GeminiError"},
         )
         _safe_move_file(file_id, DRIVE_ERROR_FOLDER_ID, DRIVE_INCOMING_FOLDER_ID)
@@ -359,7 +359,7 @@ def process_transcript(cloud_event: CloudEvent) -> None:
 
     except SalesforceAPIError as exc:
         logger.error(
-            "Salesforce API error — routing to /Error",
+            "Salesforce API error; routing to /Error",
             extra={"file_id": file_id, "error_type": "SalesforceAPIError"},
         )
         _safe_move_file(file_id, DRIVE_ERROR_FOLDER_ID, DRIVE_INCOMING_FOLDER_ID)
@@ -368,7 +368,7 @@ def process_transcript(cloud_event: CloudEvent) -> None:
 
     except Exception as exc:
         logger.error(
-            "Unhandled error in process_transcript — routing to /Error",
+            "Unhandled error in process_transcript; routing to /Error",
             extra={"file_id": file_id, "error_type": type(exc).__name__},
             exc_info=True,
         )
@@ -481,6 +481,6 @@ def _safe_move_file(
         _move_file(file_id, destination_folder_id, source_folder_id)
     except Exception as exc:
         logger.error(
-            "Failed to move file after processing error — file remains in /Incoming",
+            "Failed to move file after processing error; file remains in /Incoming",
             extra={"file_id": file_id, "error_type": type(exc).__name__},
         )

@@ -1,14 +1,14 @@
 # Healthcare AI Documentation Pipeline
 
-An end-to-end, production-grade pipeline that automates clinical SOAP note generation for a behavioral health practice. The system watches a Google Drive folder for therapy session transcripts, processes them through a Gemini 1.5 Pro prompt on Vertex AI, and posts structured SOAP notes directly to the practice's Salesforce contact records — fully HIPAA-compliant from intake to storage.
+An end-to-end, production-grade pipeline that automates clinical SOAP note generation for a behavioral health practice. The system watches a Google Drive folder for therapy session transcripts, processes them through a Gemini 1.5 Pro prompt on Vertex AI, and posts structured SOAP notes directly to the practice's Salesforce contact records, fully HIPAA-compliant from intake to storage.
 
 ---
 
 ## Problem Solved
 
-Therapists at a behavioral health practice spend 30–45 minutes after each session manually writing SOAP notes (Subjective, Objective, Assessment, Plan). These notes must be accurate, structured, and stored in the EHR (Salesforce) before the next appointment. The manual process was a bottleneck: documentation lagged, clinician burnout increased, and billing cycles were delayed.
+Therapists at a behavioral health practice wrote SOAP notes by hand after every session (Subjective, Objective, Assessment, Plan). These notes must be accurate, structured, and stored in the EHR (Salesforce) before the next appointment. The manual process was a bottleneck: documentation lagged, clinician burnout increased, and billing cycles were delayed.
 
-This pipeline reduces post-session documentation time from ~40 minutes to under 2 minutes while maintaining clinician review and sign-off, full audit trails, and HIPAA compliance.
+Deployed for 30 providers, this pipeline cut post-session documentation time by roughly 60% while maintaining clinician review and sign-off, full audit trails, and HIPAA compliance.
 
 ---
 
@@ -72,7 +72,7 @@ This pipeline reduces post-session documentation time from ~40 minutes to under 
 | Scheduler | Cloud Scheduler | Polls Drive every 2 minutes |
 | Compute | Cloud Functions Gen 2 (Python 3.11) | Serverless, event-driven processing |
 | Messaging | Pub/Sub + Eventarc | Decoupled, durable trigger between functions |
-| AI / NLP | Vertex AI — Gemini 1.5 Pro | SOAP note generation from raw transcript |
+| AI / NLP | Vertex AI: Gemini 1.5 Pro | SOAP note generation from raw transcript |
 | CRM / EHR | Salesforce REST API | Clinical note storage on contact records |
 | Secrets | GCP Secret Manager | All credentials, zero env-var secrets |
 | Logging | Cloud Logging (structured JSON) | PHI-safe audit trail |
@@ -83,11 +83,11 @@ This pipeline reduces post-session documentation time from ~40 minutes to under 
 
 ## HIPAA Compliance Summary
 
-This system was designed for HIPAA compliance from the ground up — not retrofitted.
+This system was designed for HIPAA compliance from the ground up, not retrofitted.
 
 - **No PHI in logs.** A `sanitize_for_logging()` utility strips patient names, dates of birth, contact info, and session identifiers before any log entry is written.
 - **Secrets in Secret Manager.** Zero credentials in environment variables, source code, or deployment configs. All API keys, OAuth tokens, and connection strings are fetched at runtime from GCP Secret Manager.
-- **Least-privilege IAM.** Two dedicated service accounts — one for `poll_drive` (Drive read + Pub/Sub publish) and one for `process_transcript` (Drive read/write + Vertex AI + Salesforce Secret + Logging write). No shared or default service accounts.
+- **Least-privilege IAM.** Two dedicated service accounts: one for `poll_drive` (Drive read + Pub/Sub publish) and one for `process_transcript` (Drive read/write + Vertex AI + Salesforce Secret + Logging write). No shared or default service accounts.
 - **Encryption in transit and at rest.** All GCP services use Google-managed encryption. Salesforce API calls use TLS 1.2+.
 - **Signed BAAs on file** with Google Workspace, Google Cloud Platform, and Salesforce for HIPAA covered-entity compliance.
 - **Audit logging.** Cloud Audit Logs capture all API calls to Drive, Pub/Sub, Vertex AI, and Secret Manager. Logs retained per HIPAA's 6-year minimum.
@@ -172,11 +172,11 @@ gcloud functions deploy process_transcript \
 
 ## Skills Demonstrated
 
-- **Cloud-native event-driven architecture** — Cloud Scheduler → HTTP Function → Pub/Sub → Eventarc → Pub/Sub Function, fully decoupled
-- **LLM prompt engineering for structured output** — Gemini 1.5 Pro with JSON-mode constraints, few-shot examples, and clinical domain instructions
-- **Healthcare data compliance** — HIPAA-aligned design including PHI-safe logging, Secret Manager, least-privilege IAM, and signed BAAs
-- **Production Python** — Retry logic with exponential backoff, structured error handling, input validation, PHI sanitization
-- **Multi-system API integration** — Google Drive API, Pub/Sub, Vertex AI SDK, Salesforce REST API, GCP Secret Manager
+- **Cloud-native event-driven architecture**: Cloud Scheduler → HTTP Function → Pub/Sub → Eventarc → Pub/Sub Function, fully decoupled
+- **LLM prompt engineering for structured output**: Gemini 1.5 Pro with JSON-mode constraints, few-shot examples, and clinical domain instructions
+- **Healthcare data compliance**: HIPAA-aligned design including PHI-safe logging, Secret Manager, least-privilege IAM, and signed BAAs
+- **Production Python**: Retry logic with exponential backoff, structured error handling, input validation, PHI sanitization
+- **Multi-system API integration**: Google Drive API, Pub/Sub, Vertex AI SDK, Salesforce REST API, GCP Secret Manager
 
 ---
 

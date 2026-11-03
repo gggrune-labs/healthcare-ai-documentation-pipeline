@@ -43,7 +43,7 @@ logger = get_logger(__name__)
 SF_INSTANCE_URL: str = os.environ.get("SF_INSTANCE_URL", "YOUR_SALESFORCE_INSTANCE_URL")
 SF_API_VERSION: str = os.environ.get("SF_API_VERSION", "YOUR_SALESFORCE_API_VERSION")
 
-# Secret Manager secret names — actual values fetched at runtime
+# Secret Manager secret names; actual values fetched at runtime
 SECRET_SF_CLIENT_ID: str = os.environ.get("SECRET_SF_CLIENT_ID", "YOUR_SECRET_SF_CLIENT_ID")
 SECRET_SF_CLIENT_SECRET: str = os.environ.get("SECRET_SF_CLIENT_SECRET", "YOUR_SECRET_SF_CLIENT_SECRET")
 SECRET_SF_USERNAME: str = os.environ.get("SECRET_SF_USERNAME", "YOUR_SECRET_SF_USERNAME")
@@ -297,7 +297,7 @@ class SalesforceClient:
                 timeout=15,
             )
             if response.status_code == 401 and attempt == 0:
-                logger.warning("Salesforce 401 on SOQL query — refreshing token")
+                logger.warning("Salesforce 401 on SOQL query; refreshing token")
                 self._refresh_token()
                 continue
             try:
@@ -331,7 +331,7 @@ class SalesforceClient:
                 timeout=30,
             )
             if response.status_code == 401 and attempt == 0:
-                logger.warning("Salesforce 401 on Note creation — refreshing token")
+                logger.warning("Salesforce 401 on Note creation; refreshing token")
                 self._refresh_token()
                 continue
             try:
@@ -382,13 +382,13 @@ def _build_note_title(file_name: str) -> str:
     date and a generic descriptor. Salesforce Note titles are visible to
     all users with record access.
 
-    Example: "session_2024-01-15_P12345.vtt" → "SOAP Note — 2024-01-15"
+    Example: "session_2024-01-15_P12345.vtt" → "SOAP Note: 2024-01-15"
     """
     match = re.match(r"session_(\d{4}-\d{2}-\d{2})_", file_name, re.IGNORECASE)
     if match:
-        return f"SOAP Note — {match.group(1)}"
+        return f"SOAP Note: {match.group(1)}"
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    return f"SOAP Note — {today}"
+    return f"SOAP Note: {today}"
 
 
 def _serialize_note_body(soap_note: SOAPNote) -> str:
@@ -414,7 +414,7 @@ def _serialize_note_body(soap_note: SOAPNote) -> str:
     )
 
     if len(body) > SF_NOTE_BODY_MAX_CHARS:
-        truncation_notice = "\n\n[NOTE TRUNCATED — FULL TEXT IN SOURCE SYSTEM]"
+        truncation_notice = "\n\n[NOTE TRUNCATED: FULL TEXT IN SOURCE SYSTEM]"
         body = body[: SF_NOTE_BODY_MAX_CHARS - len(truncation_notice)] + truncation_notice
         logger.warning(
             "SOAP note body exceeded Salesforce character limit and was truncated",

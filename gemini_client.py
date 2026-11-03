@@ -83,11 +83,11 @@ class SOAPNote:
     Fields:
         subjective: Patient's self-reported symptoms, concerns, and history
             as described during the session.
-        objective: Clinician's observable findings — affect, behavior,
+        objective: Clinician's observable findings: affect, behavior,
             cognition, appearance.
         assessment: Clinical formulation, diagnostic impressions, progress
             toward treatment goals.
-        plan: Next steps — homework, referrals, medication adjustments,
+        plan: Next steps: homework, referrals, medication adjustments,
             next session focus.
         session_duration_minutes: Estimated session length extracted from
             transcript timing.
@@ -117,22 +117,22 @@ You are a licensed clinical documentation assistant helping behavioral health
 therapists produce structured SOAP notes from session transcripts.
 
 Your output must be a valid JSON object with exactly these keys:
-  - "subjective": string — What the patient reported. Use first-person paraphrase
+  - "subjective": string: What the patient reported. Use first-person paraphrase
     (e.g., "Patient reports feeling..."). Do not include the therapist's words.
-  - "objective": string — Clinician-observable data: patient's affect, demeanor,
+  - "objective": string: Clinician-observable data: patient's affect, demeanor,
     speech patterns, engagement level, and any notable behavioral observations.
     Infer these from how the patient communicates in the transcript.
-  - "assessment": string — Clinical formulation. Summarize the patient's current
+  - "assessment": string: Clinical formulation. Summarize the patient's current
     functional status, progress toward stated treatment goals, and any diagnostic
     considerations raised by this session's content.
-  - "plan": string — Interventions agreed upon, homework assigned, referrals
+  - "plan": string: Interventions agreed upon, homework assigned, referrals
     discussed, topics for next session, and any safety planning steps.
-  - "session_duration_minutes": integer — Estimated session length in minutes,
+  - "session_duration_minutes": integer: Estimated session length in minutes,
     derived from the transcript timestamps or content. Use 50 if unknown.
-  - "presenting_concerns": array of strings — 3–7 bullet-point concerns raised
+  - "presenting_concerns": array of strings: 3–7 bullet-point concerns raised
     by the patient during this session (e.g., "Work-related stress", "Sleep
     difficulties", "Relationship conflict").
-  - "risk_assessment": string — Any mentions of suicidal ideation, self-harm
+  - "risk_assessment": string: Any mentions of suicidal ideation, self-harm
     urges, harm to others, or substance use crises. Write "No safety concerns
     reported this session." if none are present. Do not omit this field.
 
@@ -146,7 +146,7 @@ Constraints:
 """.strip()
 
 # ---------------------------------------------------------------------------
-# Few-Shot Examples (Synthetic — No Real PHI)
+# Few-Shot Examples (Synthetic: No Real PHI)
 # ---------------------------------------------------------------------------
 
 _FEW_SHOT_EXAMPLES: list[dict[str, str]] = [
@@ -154,7 +154,7 @@ _FEW_SHOT_EXAMPLES: list[dict[str, str]] = [
         "transcript": """
 Therapist: How have you been feeling since our last session?
 
-Patient: Honestly, pretty anxious. Work has been overwhelming — my manager
+Patient: Honestly, pretty anxious. Work has been overwhelming; my manager
 keeps adding to my plate and I'm sleeping maybe five hours a night. I had
 a panic attack on Tuesday, first one in a few months.
 
@@ -164,7 +164,7 @@ Patient: I was in a meeting and started thinking about the project deadline.
 My heart started racing and I had to step out. It lasted about ten minutes.
 
 Therapist: Let's talk about some grounding strategies you can use in those moments.
-We discussed diaphragmatic breathing last time — were you able to practice it?
+We discussed diaphragmatic breathing last time; were you able to practice it?
 
 Patient: A little. It helps when I remember to do it. I also started the
 journaling you suggested, which I think is helping.
@@ -315,7 +315,7 @@ class GeminiClient:
         # Check for content filtering or empty response
         if not response.candidates:
             raise GeminiError(
-                "Gemini returned no candidates — response may have been blocked"
+                "Gemini returned no candidates; response may have been blocked"
             )
 
         candidate = response.candidates[0]

@@ -263,7 +263,7 @@ def retry_with_backoff(
                 break
             if logger:
                 logger.warning(
-                    "Retryable error on attempt %d/%d — retrying in %.1fs",
+                    "Retryable error on attempt %d/%d; retrying in %.1fs",
                     attempt,
                     max_attempts,
                     delay,

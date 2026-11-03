@@ -26,8 +26,8 @@ The pipeline operates as a **Business Associate** of the covered entity (behavio
 ### Access Control (§ 164.312(a)(1))
 
 **Unique user identification:** Each Cloud Function runs under a dedicated, named service account:
-- `YOUR_POLL_DRIVE_SA` — used exclusively by `poll_drive`. Has no access to Vertex AI, Secret Manager, or Salesforce credentials.
-- `YOUR_PROCESS_TRANSCRIPT_SA` — used exclusively by `process_transcript`. Has no ability to directly invoke the polling function or modify Cloud Scheduler.
+- `YOUR_POLL_DRIVE_SA`: used exclusively by `poll_drive`. Has no access to Vertex AI, Secret Manager, or Salesforce credentials.
+- `YOUR_PROCESS_TRANSCRIPT_SA`: used exclusively by `process_transcript`. Has no ability to directly invoke the polling function or modify Cloud Scheduler.
 
 **Minimum necessary access (least privilege):**
 
@@ -64,7 +64,7 @@ Audit logs are retained for a minimum of **6 years** (HIPAA minimum) via a log s
 
 **PHI-in-transit integrity:** All API calls (Drive, Pub/Sub, Vertex AI, Salesforce) use HTTPS/TLS, which provides both encryption and integrity verification via TLS MAC.
 
-**PHI-at-rest integrity:** GCP and Salesforce both provide checksums and integrity validation for stored data. The pipeline does not modify transcript files in place — it moves them atomically to destination folders after processing, preserving the original content.
+**PHI-at-rest integrity:** GCP and Salesforce both provide checksums and integrity validation for stored data. The pipeline does not modify transcript files in place; it moves them atomically to destination folders after processing, preserving the original content.
 
 **Transcript provenance:** The `file_id` from Google Drive is passed through the entire pipeline and recorded in the final Salesforce note, creating a traceable link from clinical note back to source transcript.
 
@@ -127,7 +127,7 @@ The `sanitize_for_logging()` function in `utils.py` removes the following before
 - Non-PHI Drive file IDs (opaque identifiers)
 - Non-PHI Salesforce contact IDs (opaque identifiers)
 - Outcome codes (`processed`, `no_match`, `error`)
-- Error type categories (e.g., `SalesforceAuthError`, `GeminiTimeoutError`) — never raw error messages that might contain PHI
+- Error type categories (e.g., `SalesforceAuthError`, `GeminiTimeoutError`); never raw error messages that might contain PHI
 - Timing metrics (duration in milliseconds)
 - Function metadata (name, version, region)
 
