@@ -235,7 +235,7 @@ def _extract_cues(lines: list[str]) -> list[dict]:
             continue
 
         if _VTT_CUE_ID_RE.match(line) and current_cue is None:
-            continue  # Numeric cue ID before a timestamp — skip
+            continue  # Numeric cue ID before a timestamp; skip
 
         if current_cue is not None:
             cleaned = _clean_cue_line(line)
